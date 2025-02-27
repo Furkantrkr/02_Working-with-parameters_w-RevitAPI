@@ -22,22 +22,13 @@ namespace _02_Working_with_parameters
             Document doc = uiDoc.Document;
 
             Selection sel = uiDoc.Selection;
-            ICollection<ElementId> elementIds = sel.GetElementIds();
-
-            IList<Element> elementsFromIds = new List<Element>();
-
-            foreach (ElementId elementId in elementIds)
-            {
-                Element el = doc.GetElement(elementId);
-
-                elementsFromIds.Add(el);
-            }
+            IEnumerable<Element> selectedElements = sel.GetElementIds().Select(id => doc.GetElement(id));
 
             using(Transaction trans = new Transaction(doc,"Move Elements"))
             {
                 trans.Start();
 
-                foreach(Element element in elementsFromIds)
+                foreach(Element element in selectedElements)
                 {
                     Location loc = element.Location;
 
