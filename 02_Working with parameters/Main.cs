@@ -32,7 +32,7 @@ namespace _02_Working_with_parameters
 
                 foreach (Element element in selectedElements)
                 {
-                    Parameter commentParam = element.LookupParameter("Comments");
+                    Parameter commentParam = element.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS);
                     string paramStr = commentParam.AsString();
 
                     taskDialogText += $"Element ID: {element.Id} - Comments: {paramStr}\n";
