@@ -22,21 +22,23 @@ namespace _02_Working_with_parameters
             Document doc = uiDoc.Document;
 
             Selection sel = uiDoc.Selection;
-            IEnumerable<Element> selectedElements = sel.GetElementIds().Select(id => doc.GetElement(id));
+            ICollection<Element> selectedElements = sel.GetElementIds().Select(id => doc.GetElement(id)).ToList();
 
             using(Transaction trans = new Transaction(doc,"Move Elements"))
             {
                 trans.Start();
 
-                foreach(Element element in selectedElements)
-                {
-                    Location loc = element.Location;
+                string taskDialogText = "";
 
-                    if (loc is LocationPoint || loc is LocationCurve)
-                    {
-                        loc.Move(new XYZ(2, 2, 2));
-                    }
+                foreach (Element element in selectedElements)
+                {
+                    Parameter commentParam = element.LookupParameter("Comments");
+                    string paramStr = commentParam.AsString();
+
+                    taskDialogText += $"Element ID: {element.Id} - Comments: {paramStr}\n";
                 }
+
+                TaskDialog.Show("Comments", taskDialogText);
 
                 trans.Commit();
             }
