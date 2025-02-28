@@ -16,30 +16,26 @@ namespace _02_Working_with_parameters
     public class Main : IExternalCommand
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements) {
+
             UIApplication uiApp = commandData.Application;
             Application app = uiApp.Application;
             UIDocument uiDoc = uiApp.ActiveUIDocument;
             Document doc = uiDoc.Document;
 
+            // Current selection of user in revit
             Selection sel = uiDoc.Selection;
-            ICollection<Element> selectedElements = sel.GetElementIds().Select(id => doc.GetElement(id)).ToList();
+            ICollection<Element> selectedElements = sel.GetElementIds().Select(id => doc.GetElement(id)).ToList(); // Get all selected elements
 
-            using(Transaction trans = new Transaction(doc,"Move Elements"))
+            // Transcation
+            using (Transaction trans = new Transaction(doc,"Set Values"))
             {
                 trans.Start();
-
-                string taskDialogText = "";
 
                 foreach (Element element in selectedElements)
                 {
                     Parameter commentParam = element.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS);
-                    string paramStr = commentParam.AsString();
-
-                    taskDialogText += $"Element ID: {element.Id} - Comments: {paramStr}\n";
+                    commentParam.Set("This is a generic comment.");
                 }
-
-                TaskDialog.Show("Comments", taskDialogText);
-
                 trans.Commit();
             }
 
